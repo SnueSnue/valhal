@@ -1,36 +1,84 @@
 #include "todo.h"
+#include "cal.h"
 
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+enum app{call, todo};
+
 int main() {
-    int ch;
     Todo_list todo_list;
-    FILE *p_todo;
+    Calendar cal;
     WINDOW *todo_win;
+    WINDOW *cal_win;
     int rows, cols;
+    int ch;
+
+    int current_app = todo;
 
     initscr();
     cbreak();
     // raw();
     keypad(stdscr, TRUE);
     noecho();
+    refresh();
 
     getmaxyx(stdscr, rows, cols);
+    cal_win = newwin(rows/2, cols/2, 0, 0);
+    cal = new_cal(cal_win);
     todo_win = newwin(rows/2, cols/2, 0, cols/2);
     todo_list = new_list(todo_win);
 
-    move(3, 0);
-
     print_todo_list(&todo_list);
-
-    int cont = 1;
+    print_cal(&cal);
 
     while ((ch = (char)getch()) != 'q') {
-        todo_handle_input(&todo_list, ch);
-        
+        switch (ch) {
+            case 'H':
+                if (current_app == call) {
+                    current_app = todo;
+                    mvwprintw(cal_win, 0, 3, "Calendar");
+                    wattron(todo_win, A_BOLD);
+                    mvwprintw(todo_win, 0, 3, "todo list");
+                    wattroff(todo_win, A_BOLD);
+                    wmove(todo_win, 10, 3);
+                }
+                else {
+                    current_app = call;
+                    mvwprintw(todo_win, 0, 3, "todo list");
+                    wattron(cal_win, A_BOLD);
+                    mvwprintw(cal_win, 0, 3, "Calendar");
+                    wattroff(cal_win, A_BOLD);
+                    wmove(cal_win, 10, 3);
+                }
+                wrefresh(todo_win);
+                wrefresh(cal_win);
+                break;
+            case 'L':
+                if (current_app == call) {
+                    current_app = todo;
+                    mvwprintw(cal_win, 0, 3, "Calendar");
+                    wattron(todo_win, A_BOLD);
+                    mvwprintw(todo_win, 0, 3, "todo list");
+                    wattroff(todo_win, A_BOLD);
+                    wmove(todo_win, 10, 3);
+                }
+                else {
+                    current_app = call;
+                    mvwprintw(todo_win, 0, 3, "todo list");
+                    wattron(cal_win, A_BOLD);
+                    mvwprintw(cal_win, 0, 3, "Calendar");
+                    wattroff(cal_win, A_BOLD);
+                    wmove(cal_win, 10, 3);
+                }
+                wrefresh(cal_win);
+                wrefresh(todo_win);
+                break;
+            default:
+                todo_handle_input(&todo_list, ch);
+        }
     }
 
 

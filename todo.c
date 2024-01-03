@@ -5,6 +5,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+int place_cursor(WINDOW *win) {
+    int rows, cols;
+
+    getmaxyx(win, rows, cols);
+    wmove(win, rows - 3, 3);
+
+    return 0;
+}
+
 int read_todo_file(Todo_list *list) {
     /* This function reads a todo.txt into the memory of list */
     FILE *p_todo;
@@ -44,7 +53,7 @@ int print_todo_list(Todo_list *list) {
         mvwprintw(win, 3 + i*2, 3, "%s", &list->item[i]);
     }
 
-    // wrefresh(win);
+    wrefresh(win);
 
     return 0;
 }
@@ -71,7 +80,7 @@ int todo_list_move_to(Todo_list *list, int target) {
 
     list->current_item = current_item;
 
-    move(0,0);
+    place_cursor(list->win);
     wrefresh(list->win);
     return 0;
 }
@@ -97,7 +106,7 @@ int todo_list_toggle_item(Todo_list *list) {
     mvwprintw(list->win, 3 + list->current_item*2, 3, "%s", &list->item[list->current_item].string);
     wattroff(win, A_BOLD);
 
-    move(0, 0);
+    place_cursor(win);
     wrefresh(win);
     return 0;
 }
@@ -112,13 +121,10 @@ int todo_handle_input(Todo_list *list, char ch) {
             break;
         case '\t':
             todo_list_toggle_item(list);
-            // mvwprintw(list->win, 3 + list->current_item*2, 4, "x");
-            wrefresh(list->win);
-            break;
-        case 'i':
-            printw("hello :3");
             break;
         default:
+            waddch(list->win, (int)ch);
+            wrefresh(list->win);
             break;
     }
 }
