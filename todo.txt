@@ -1,0 +1,3 @@
+[x] make program read and show this list
+[ ] make this progam edit this list
+[ ] make this program able to read and show a standard calendar
