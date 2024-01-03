@@ -21,3 +21,11 @@ int print_cal(Calendar *cal) {
 
     return 0;
 }
+
+
+int cal_handle_input(Calendar *cal, char ch) {
+    waddch(cal->win, ch);
+    wrefresh(cal->win);
+
+    return 0;
+}

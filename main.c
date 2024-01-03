@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum app{call, todo};
+enum app {call, todo};
 
 int main() {
     Todo_list todo_list;
@@ -16,7 +16,10 @@ int main() {
     int rows, cols;
     int ch;
 
-    int current_app = todo;
+    enum app current_app = todo;
+
+    // int (*handle_input)(void*, char);
+    // void *app;
 
     initscr();
     cbreak();
@@ -28,8 +31,10 @@ int main() {
     getmaxyx(stdscr, rows, cols);
     cal_win = newwin(rows/2, cols/2, 0, 0);
     cal = new_cal(cal_win);
+    // handle_input[0] = cal_handle_input; 
     todo_win = newwin(rows/2, cols/2, 0, cols/2);
     todo_list = new_list(todo_win);
+    // handle_input[1] = todo_handle_input;
 
     print_todo_list(&todo_list);
     print_cal(&cal);
@@ -77,7 +82,10 @@ int main() {
                 wrefresh(todo_win);
                 break;
             default:
-                todo_handle_input(&todo_list, ch);
+                if (current_app == call)
+                    cal_handle_input(&cal, ch);
+                else
+                    todo_handle_input(&todo_list, ch);
         }
     }
 

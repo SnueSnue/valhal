@@ -11,4 +11,6 @@ Calendar new_cal();
 
 int print_cal(Calendar *cal);
 
+int cal_handle_input(Calendar *cal, char ch);
+
 #endif // CAL_H
